@@ -1,0 +1,13 @@
+# MycraNickname v1.0.0
+# @author     ucchy
+# @license    GPLv3
+# @copyright  Copyright ucchy 2013
+
+# Cooltime seconds for re-set nickname.
+cooltime: 300
+
+# Allow nickname by only numbers.
+allowOnlyNumbers: false
+
+# Max length of nickname.
+maxLength: 16

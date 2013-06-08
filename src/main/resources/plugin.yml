@@ -1,0 +1,34 @@
+name: MyCraNickname
+main: com.github.ucchyocean.mn.MycraNickname
+version: 1.0.0
+author: ucchy
+description: my-craサーバー ニックネームシステム
+commands:
+  nickname:
+    description: ニックネームコマンド
+    aliases: [nick]
+    usage: |
+           /<command> set (nickname) - 自分のニックネームを設定する
+           /<command> off - 自分のニックネームを削除する
+           /<command> off (playername) - 他者のニックネームを削除する
+           /<command> list - ニックネームの一覧を参照する
+    permission: nickname
+    permission-message: パーミッション "<permission>" がないため、コマンドを実行できません。
+permissions:
+  nickname.self:
+    description: 自分のニックネームを変更するパーミッション
+    default: true
+  nickname.other:
+    description: 他者のニックネームを変更するパーミッション
+    default: op
+  nickname.list:
+    description: ニックネームを一覧表示するパーミッション
+    default: op
+  nickname.reload:
+    description: config.yml を再読み込みするパーミッション
+    default: op
+  nickname.*:
+    description: 全てのパーミッション
+    children:
+      nickname.self: true
+      nickname.other: true
