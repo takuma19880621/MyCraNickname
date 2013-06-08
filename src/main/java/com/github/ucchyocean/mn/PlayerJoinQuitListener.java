@@ -32,7 +32,8 @@ public class PlayerJoinQuitListener implements Listener {
 
         // 保存していたニックネームを再設定
         if ( nickname != null ) {
-            player.setDisplayName(ChatColor.AQUA + nickname + ChatColor.RESET);
+            player.setDisplayName(ChatColor.AQUA + nickname +
+                    ChatColor.WHITE + "(" + player.getName() + ")");
 
             // ログイン時のメッセージを入れ替えする
             String message = event.getJoinMessage();
