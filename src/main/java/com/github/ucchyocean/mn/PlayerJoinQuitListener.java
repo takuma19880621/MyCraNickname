@@ -11,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * プレイヤーのログインを取得するリスナークラス
@@ -21,10 +20,11 @@ public class PlayerJoinQuitListener implements Listener {
 
     /**
      * プレイヤーがログインしたときに呼び出されるメソッド。
-     * joinメッセージを他のプラグインに先に置き換えてもらうために、優先度を高くしている。
+     * joinメッセージを置き換える他のプラグインより先にdisplaynameを置き換えるため、
+     * 優先度を低くしている。
      * @param event
      */
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
 
         Player player = event.getPlayer();
@@ -34,29 +34,6 @@ public class PlayerJoinQuitListener implements Listener {
         if ( nickname != null ) {
             player.setDisplayName(ChatColor.AQUA + nickname +
                     ChatColor.WHITE + "(" + player.getName() + ")");
-
-            // ログイン時のメッセージを入れ替えする
-            String message = event.getJoinMessage();
-            event.setJoinMessage(message.replace(player.getName(), nickname));
         }
     }
-
-    /**
-     * プレイヤーがログアウトしたときに呼び出されるメソッド。
-     * quitメッセージを他のプラグインに先に置き換えてもらうために、優先度を高くしている。
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerQuit(PlayerQuitEvent event) {
-
-        Player player = event.getPlayer();
-        String nickname = UserConfiguration.getUserNickname(player.getName());
-
-        // ログアウト時のメッセージを入れ替えする
-        if ( nickname != null ) {
-            String message = event.getQuitMessage();
-            event.setQuitMessage(message.replace(player.getName(), nickname));
-        }
-    }
-
 }

@@ -14,6 +14,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -86,18 +87,12 @@ public class MycraNickname extends JavaPlugin {
 
         } else if ( args[0].equalsIgnoreCase("list") ) {
             // リストコマンド
+            return list(sender, command, label, args);
 
-            Properties prop = UserConfiguration.getAllUserNickname();
-            Enumeration<Object> keys = prop.keys();
-            while ( keys.hasMoreElements() ) {
-                String key = (String)keys.nextElement();
-                String value = prop.getProperty(key);
-                sender.sendMessage(String.format("%s|%s %s %s->%s %s",
-                        ChatColor.DARK_GRAY.toString(), ChatColor.WHITE.toString(), key,
-                        ChatColor.GRAY.toString(), ChatColor.WHITE.toString(), value));
-            }
+        } else if ( args[0].equalsIgnoreCase("reload") ) {
+            // リロードコマンド
+            return reload(sender, command, label, args);
 
-            return true;
         }
 
         return false;
@@ -122,7 +117,11 @@ public class MycraNickname extends JavaPlugin {
 
         // DisplayNameをリセットして、ユーザー設定を削除する
         player.setDisplayName(player.getName());
-        UserConfiguration.setUserNickname(player.getName(), null);
+        YamlConfiguration config =
+                UserConfiguration.getUserConfiguration(player.getName());
+        config.set(UserConfiguration.KEY_USER_NICKNAME, null);
+        UserConfiguration.saveUserConfiguration(player.getName(), config);
+
         player.sendMessage(PREINFO +
                 "あなたのニックネームが解除されました。");
 
@@ -145,7 +144,12 @@ public class MycraNickname extends JavaPlugin {
             return true;
         }
 
-        UserConfiguration.setUserNickname(args[1], null);
+        // DisplayNameをリセットして、ユーザー設定を削除する
+        YamlConfiguration config =
+                UserConfiguration.getUserConfiguration(args[1]);
+        config.set(UserConfiguration.KEY_USER_NICKNAME, null);
+        UserConfiguration.saveUserConfiguration(args[1], config);
+
         sender.sendMessage(PREINFO +
                 args[1] + " のニックネームが解除されました。");
         Player other = getServer().getPlayerExact(args[1]);
@@ -213,11 +217,51 @@ public class MycraNickname extends JavaPlugin {
         player.setDisplayName(ChatColor.AQUA + nickname +
                 ChatColor.WHITE + "(" + player.getName() + ")");
 
-        UserConfiguration.setUserNickname(player.getName(), nickname);
-        UserConfiguration.setLastSetTime(player.getName(), nowTime);
+        YamlConfiguration config =
+                UserConfiguration.getUserConfiguration(player.getName());
+        config.set(UserConfiguration.KEY_USER_NICKNAME, nickname);
+        config.set(UserConfiguration.KEY_USER_LASTSETTIME, nowTime);
+        UserConfiguration.saveUserConfiguration(player.getName(), config);
 
         player.sendMessage(PREINFO +
                 nickname + " がニックネームに設定されました。");
+
+        return true;
+    }
+
+    private boolean list(
+            CommandSender sender, Command command, String label, String[] args) {
+
+        if ( !sender.hasPermission("nickname.list") ) {
+            sender.sendMessage(PREERR +
+                    "パーミッション \"nickname.list\" がないため、コマンドを実行できません。");
+            return true;
+        }
+
+        Properties prop = UserConfiguration.getAllUserNickname();
+        Enumeration<Object> keys = prop.keys();
+        while ( keys.hasMoreElements() ) {
+            String key = (String)keys.nextElement();
+            String value = prop.getProperty(key);
+            sender.sendMessage(String.format("%s|%s %s %s->%s %s",
+                    ChatColor.DARK_GRAY.toString(), ChatColor.WHITE.toString(), key,
+                    ChatColor.GRAY.toString(), ChatColor.WHITE.toString(), value));
+        }
+
+        return true;
+    }
+
+    private boolean reload(
+            CommandSender sender, Command command, String label, String[] args) {
+
+        if ( !sender.hasPermission("nickname.reload") ) {
+            sender.sendMessage(PREERR +
+                    "パーミッション \"nickname.reload\" がないため、コマンドを実行できません。");
+            return true;
+        }
+
+        reloadConfigFile();
+        sender.sendMessage(PREINFO + "config.yml を再読み込みしました。");
 
         return true;
     }

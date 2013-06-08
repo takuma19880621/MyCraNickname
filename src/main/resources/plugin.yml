@@ -12,8 +12,7 @@ commands:
            /<command> off - 自分のニックネームを削除する
            /<command> off (playername) - 他者のニックネームを削除する
            /<command> list - ニックネームの一覧を参照する
-    permission: nickname
-    permission-message: パーミッション "<permission>" がないため、コマンドを実行できません。
+           /<command> reload - config.yml の再読み込みをする
 permissions:
   nickname.self:
     description: 自分のニックネームを変更するパーミッション
@@ -23,7 +22,7 @@ permissions:
     default: op
   nickname.list:
     description: ニックネームを一覧表示するパーミッション
-    default: op
+    default: true
   nickname.reload:
     description: config.yml を再読み込みするパーミッション
     default: op
