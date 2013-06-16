@@ -31,3 +31,5 @@ permissions:
     children:
       nickname.self: true
       nickname.other: true
+      nickname.list: true
+      nickname.reload: true
